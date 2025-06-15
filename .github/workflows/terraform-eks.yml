@@ -1,0 +1,39 @@
+name: Terraform Security Checks
+
+on:
+  pull_request:
+    paths:
+      - '**.tf'
+      - '.github/workflows/terraform-eks.yml'
+
+jobs:
+  security:
+    name: DevSecOps CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧾 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🧱 Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: 🧼 Terraform Init
+        run: terraform init
+
+      - name: 🔍 Terraform Validate
+        run: terraform validate
+
+      - name: 📏 Install TFLint
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+          tflint --init
+
+      - name: 📏 Run TFLint
+        run: tflint
+
+      - name: 🛡️ Install Checkov
+        run: pip install checkov
+
+      - name: 🔐 Run Checkov
+        run: checkov -d .
