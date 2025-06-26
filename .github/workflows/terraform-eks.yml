@@ -1,15 +1,25 @@
 name: Terraform Security Checks
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
-    paths:
-      - '**.tf'
-      - '.github/workflows/terraform-eks.yml'
+    branches:
+      - main
 
+permissions:
+  contents: read
+  pull-requests: read
+        
 jobs:
   security:
     name: DevSecOps CI
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: read
 
     steps:
       - name: 🧾 Checkout code
